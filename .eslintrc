@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "extends": [
+    "@react-native-community"
+  ],
+  "rules": {
+    "noImplicitAny": 0
+  }
+}
