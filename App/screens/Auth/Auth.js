@@ -30,7 +30,8 @@ export const Auth = ({navigation}) => {
           onChangeText={v => setLogin(v)}
           placeholder="Email"
           textContentType="emailAddress"
-          underlineColor="transparent"
+          underlineColor="#ffffff"
+          // theme={{colors: {primary: '#ffffff'}}}
         />
         <SecuryInput
           value={password}
@@ -76,6 +77,7 @@ const Input = styled(TextInput)`
   border-radius: 30px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  overflow: hidden;
 `;
 
 const Button = styled(TouchableOpacity)`

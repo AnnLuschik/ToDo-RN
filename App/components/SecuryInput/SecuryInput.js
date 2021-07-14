@@ -5,12 +5,13 @@ import {CustomIcon} from '../../components';
 
 export const SecuryInput = ({value, onChange, isHidden, setIsHidden}) => (
   <Input
+    // theme={{colors: {primary: '#ffffff', text: '#000000'}}}
     value={value}
     onChangeText={v => onChange(v)}
     placeholder="Password"
     textContentType="password"
     secureTextEntry={isHidden}
-    underlineColor="transparent"
+    underlineColor="#ffffff"
     right={
       <TextInput.Icon
         name={() => (
@@ -33,4 +34,5 @@ const Input = styled(TextInput)`
   border-radius: 30px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  overflow: hidden;
 `;

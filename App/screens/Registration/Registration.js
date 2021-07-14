@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput, Pressable} from 'react-native';
+import {View, Text, TouchableOpacity, Pressable} from 'react-native';
+import {TextInput} from 'react-native-paper';
 import styled from 'styled-components';
 import auth from '@react-native-firebase/auth';
 import {routes} from '../../routes';
@@ -27,6 +28,8 @@ export const Registration = ({navigation}) => {
           onChangeText={v => setLogin(v)}
           placeholder="Email"
           textContentType="emailAddress"
+          underlineColor="#ffffff"
+          // theme={{colors: {primary: '#ffffff'}}}
         />
         <SecuryInput
           value={password}
@@ -55,11 +58,12 @@ const Container = styled(View)`
 
 const Input = styled(TextInput)`
   margin-bottom: 18px;
-  padding: 10px;
   font-size: 18px;
   background-color: #ffffff;
-  border: 1px solid #ffffff;
-  border-radius: 15px;
+  border-radius: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  overflow: hidden;
 `;
 
 const Button = styled(TouchableOpacity)`
@@ -67,7 +71,7 @@ const Button = styled(TouchableOpacity)`
   margin-bottom: 32px;
   padding: 10px 25px;
   background-color: #b2b2b2;
-  border-radius: 15px;
+  border-radius: 30px;
 `;
 
 const ButtonText = styled(Text)`
