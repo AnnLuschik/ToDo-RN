@@ -34,7 +34,7 @@ const Container = styled(View)`
   justify-content: space-between;
   padding: 16px;
   margin-bottom: 10px;
-  background-color: green;
+  background-color: #52ca77;
 `;
 
 const Title = styled(Text)`
@@ -44,7 +44,3 @@ const Title = styled(Text)`
   color: #ffffff;
   ${props => (props.isDone ? 'text-decoration: line-through' : null)};
 `;
-
-// const DeleteIcon = styled(Icon.Button)`
-//   align-self: flex-end;
-// `;
