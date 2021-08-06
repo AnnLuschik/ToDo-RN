@@ -9,20 +9,32 @@ import {SecuryInput} from '../../components';
 export const Registration = ({navigation}) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [isHiddenPassword, setIsHiddenPassword] = useState(true);
 
-  const signUp = () => {
-    if (login.length && password.length) {
-      auth()
+  const signUp = async () => {
+    if (login.length && password.length && username.length) {
+      await auth()
         .createUserWithEmailAndPassword(login, password)
         .then(() => alert('User was created'))
         .catch(error => alert(error.message));
+
+      await auth()
+        .currentUser.updateProfile({displayName: username})
+        .catch(error => console.log(error.message));
     }
   };
 
   return (
     <Container>
       <View>
+        <Input
+          value={username}
+          onChangeText={v => setUsername(v)}
+          placeholder="Username"
+          textContentType="username"
+          underlineColor="#ffffff"
+        />
         <Input
           value={login}
           onChangeText={v => setLogin(v)}
