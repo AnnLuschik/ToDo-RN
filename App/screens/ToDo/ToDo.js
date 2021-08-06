@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, FlatList} from 'react-native';
-import {TodoItem, AddTodo} from '../../components';
+import {TodoItem} from './TodoItem';
+import {AddTodo} from './AddTodo';
 
 export const ToDo = () => {
   const [data, setData] = useState([]);
