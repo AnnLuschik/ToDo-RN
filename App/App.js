@@ -22,6 +22,12 @@ export const App = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
+  const logoutHandler = () => {
+    auth()
+      .signOut()
+      .catch(error => alert(error.code));
+  };
+
   const onAuthStateChanged = useCallback(
     u => {
       setUser(u);
@@ -65,7 +71,21 @@ export const App = () => {
               ),
             })}
           />
-          <Stack.Screen name={routes.profile} component={Profile} />
+          <Stack.Screen
+            name={routes.profile}
+            component={Profile}
+            options={({navigation}) => ({
+              headerRight: () => (
+                <Icon.Button
+                  name="logout"
+                  onPress={logoutHandler}
+                  size={40}
+                  backgroundColor="transparent"
+                  color="#000000"
+                />
+              ),
+            })}
+          />
         </Stack.Navigator>
       )}
     </NavigationContainer>
