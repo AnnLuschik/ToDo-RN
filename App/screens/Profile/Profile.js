@@ -1,20 +1,29 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableHighlight, TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableHighlight,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {TextInput} from 'react-native-paper';
 import styled from 'styled-components';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import defaultAvatar from '../../../resources/default-avatar.jpeg';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {launchImageLibrary} from 'react-native-image-picker';
+
+const imagePickerOptions = {
+  mediaType: 'photo',
+};
 
 export const Profile = () => {
-  const user = auth().currentUser;
+  let user = auth().currentUser;
 
   const [name, setName] = useState(user.displayName);
-  const [isNameEditing, setIsNameEditing] = useState(false);
-
-  const logoutHandler = () => {
-    auth()
-      .signOut()
-      .catch(error => alert(error.code));
-  };
+  const [avatar, setAvatar] = useState(user.photoURL);
+  const [isEditing, setIsEditing] = useState(false);
 
   const updateName = async () => {
     try {
@@ -24,44 +33,65 @@ export const Profile = () => {
     } catch {
       error => alert(error.code);
     } finally {
-      setIsNameEditing(false);
+      setIsEditing(false);
     }
+  };
+
+  const editProfile = () => {
+    if (isEditing) {
+      updateName();
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  const onPhotoSelect = async photo => {
+    if (!photo.didCancel) {
+      const reference = storage().ref(photo.assets[0].fileName);
+      await reference.putFile(photo.assets[0].uri);
+      const downloadURL = await reference.getDownloadURL();
+      await auth().currentUser.updateProfile({
+        photoURL: downloadURL,
+      });
+      user = auth().currentUser;
+      setAvatar(user.photoURL);
+    }
+  };
+
+  const changeAvatar = () => {
+    launchImageLibrary(imagePickerOptions, onPhotoSelect);
   };
 
   return (
     <Container>
-      <Title>Profile</Title>
       <Info>
-        {isNameEditing ? (
-          <>
-            <Editable
-              value={name}
-              onChangeText={v => setName(v)}
-              onEndEditing={updateName}
-            />
-            <ConfirmButton
-              name="done"
-              size={35}
-              onPress={updateName}
-              backgroundColor="#ffffff"
-              color="#000000"
-            />
-          </>
+        <AvatarWrapper>
+          <Avatar
+            source={avatar ? {uri: avatar} : defaultAvatar}
+            isEditing={isEditing}
+            resizeMode="cover"
+          />
+          {isEditing ? (
+            <ImagePicker onPress={changeAvatar}>
+              <ImagePickerText>Add photo</ImagePickerText>
+            </ImagePicker>
+          ) : null}
+        </AvatarWrapper>
+        {isEditing ? (
+          <Editable
+            value={name}
+            onChangeText={v => setName(v)}
+            right={
+              <TextInput.Icon name={() => <Icon name="create" size={35} />} />
+            }
+          />
         ) : (
-          <>
-            <Username>{name}</Username>
-            <EditButton
-              name="create"
-              onPress={() => setIsNameEditing(true)}
-              size={30}
-              backgroundColor="transparent"
-              color="#000000"
-            />
-          </>
+          <Username>{name}</Username>
         )}
       </Info>
-      <LogoutButton onPress={logoutHandler} underlayColor="#88A2BE">
-        <ButtonText>Log out</ButtonText>
+      <LogoutButton onPress={editProfile} underlayColor="#88A2BE">
+        <ButtonText>{isEditing ? 'Save changes' : 'Edit profile'}</ButtonText>
       </LogoutButton>
     </Container>
   );
@@ -72,15 +102,9 @@ const Container = styled(View)`
   padding: 32px 10px;
 `;
 
-const Title = styled(Text)`
-  align-self: center;
-  margin-bottom: 28px;
-  font-weight: bold;
-  font-size: 28px;
-`;
-
 const Info = styled(View)`
   flex-direction: row;
+  align-items: center;
   margin-bottom: 36px;
 `;
 
@@ -89,17 +113,11 @@ const Username = styled(Text)`
 `;
 
 const Editable = styled(TextInput)`
-  width: 80%;
-  padding: 5px;
+  justify-content: center;
+  width: 65%;
   font-size: 24px;
   background-color: #ffffff;
 `;
-
-const EditButton = styled(Icon.Button)`
-  align-self: center;
-`;
-
-const ConfirmButton = styled(Icon.Button)``;
 
 const LogoutButton = styled(TouchableHighlight)`
   align-items: center;
@@ -109,4 +127,33 @@ const LogoutButton = styled(TouchableHighlight)`
 
 const ButtonText = styled(Text)`
   font-size: 24px;
+`;
+
+const AvatarWrapper = styled(View)`
+  width: 100px;
+  height: 100px;
+  margin-right: 16px;
+`;
+
+const Avatar = styled(Image)`
+  width: 100%;
+  height: 100%;
+  border-radius: 50;
+  opacity: ${props => (props.isEditing ? '0.5' : '1')};
+`;
+
+const ImagePicker = styled(TouchableOpacity)`
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50;
+`;
+
+const ImagePickerText = styled(Text)`
+  text-align: center;
+  font-size: 24px;
+  color: #000000;
 `;
